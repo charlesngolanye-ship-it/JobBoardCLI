@@ -29,12 +29,12 @@ public class Main {
                     );
 
                     // Services
-                    JobService jobService = new JobService(jobDAO, employerDAO);
-                    ApplicationService applicationService = new ApplicationService(applicationDAO, applicantDAO);
+                    JobService jobService = new JobService(jobDAO, employerDAO, applicationDAO, applicantDAO);
+                    ApplicationService applicationService = new ApplicationService(applicationDAO, applicantDAO, jobDAO);
 
                     // Menus
-                    EmployerMenu employerMenu = new EmployerMenu(jobService);
-                    ApplicationMenu applicationMenu = new ApplicationMenu(applicationService);
+                    EmployerMenu employerMenu = new EmployerMenu(jobService,applicationService);
+                    ApplicationMenu applicationMenu = new ApplicationMenu(applicationService, jobService);
 
                     // Routing
                     System.out.println("Select role (Employer(E) / Applicant(A)");

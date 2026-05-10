@@ -52,8 +52,24 @@ public class ApplicationDAO {
         }
     }
 
-    public Optional<Application> findByJobId(int id){
-        String sql = "SELECT * FROM applications WHERE job_id = ?";
+    public void updateApplicationStatus(int applicationId, Status status){
+        String sql = "UPDATE applications SET status = ? WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, status.name());
+            preparedStatement.setInt(2, applicationId);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new IllegalArgumentException("Application not found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Optional<Application> findApplicationById(int id){
+        String sql = "SELECT * FROM applications WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -65,10 +81,43 @@ public class ApplicationDAO {
         return Optional.empty();
     }
 
-    public Optional<Application> findByApplicant(int id){
-        String sql = "SELECT * FROM applications WHERE applicant_id = ?";
+    public List<Application> findApplicationByJobId(int jobId){
+        List<Application> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM applications WHERE job_id = ?";
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, id);
+             preparedStatement.setInt(1, jobId);
+             ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) list.add(mapRow(resultSet));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Application> findApplicationByApplicantId(int applicantId){
+        List<Application> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM applications WHERE applicant_id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, applicantId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) list.add(mapRow(resultSet));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Optional<Application> findByJobAndApplicant(int jobId, int applicantId){
+        String sql = "SELECT * FROM applications WHERE job_id = ? AND applicant_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, jobId);
+            preparedStatement.setInt(2, applicantId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) return Optional.of(mapRow(resultSet));
             }
@@ -103,6 +152,21 @@ public class ApplicationDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int countApplicationsForJob(int jobId){
+        String sql = "SELECT COUNT(*) FROM applications WHERE job_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, jobId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // error
     }
 
     public int delete(int id){

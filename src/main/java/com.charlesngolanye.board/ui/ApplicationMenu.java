@@ -1,24 +1,34 @@
 package com.charlesngolanye.board.ui;
 
 
+import com.charlesngolanye.board.dto.ApplicationHistoryView;
+import com.charlesngolanye.board.model.Status;
 import com.charlesngolanye.board.model.Applicant;
 import com.charlesngolanye.board.model.Application;
-import com.charlesngolanye.board.model.Status;
+import com.charlesngolanye.board.model.Job;
+import com.charlesngolanye.board.model.JobType;
 import com.charlesngolanye.board.service.ApplicationService;
+import com.charlesngolanye.board.service.JobService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ApplicationMenu {
     private final ApplicationService applicationService;
+    private final JobService jobService;
+
     private final Scanner userInput = new Scanner(System.in);
 
-    public ApplicationMenu(ApplicationService applicationService) {
+    public ApplicationMenu(ApplicationService applicationService, JobService jobService) {
         this.applicationService = applicationService;
+        this.jobService = jobService;
     }
 
     public void start() {
+        Applicant loggedInApplicant = null;
+
         while (true) {
             printApplicantMenu();
 
@@ -32,22 +42,68 @@ public class ApplicationMenu {
                     break;
 
                 case 2:
-                    Applicant applicantLogin = loginApplicant();
-                    applicationService.getApplicantByEmail(applicantLogin.getEmail());
+                    String email = loginApplicant();
+                    Optional<Applicant> applicantOptional = applicationService.getApplicantByEmail(email);
+                    if (applicantOptional.isPresent()) {
+                        loggedInApplicant = applicantOptional.get();
+                        System.out.println("Successfully logged in");
+                    }
+                    else {
+                        System.out.println("Invalid email");
+                    }
                     break;
 
                 case 3:
-                    List<Application> applications = applicationService.getAllApplications();
-                    if (applications.isEmpty()) System.out.println("No applications found.");
-                    else applications.forEach(System.out::println);
+                    System.out.print("""
+                            Enter job type:
+                            FULL_TIME
+                            PART_TIME
+                            CONTRACT
+                            REMOTE
+                            """);
+                    String typeInput = userInput.nextLine();
+
+                    JobType jobType = JobType.valueOf(typeInput.toUpperCase());
+                    List<Job> jobs = jobService.findOpenJobsByType(jobType);
+
+                    if (jobs.isEmpty()) {
+                        System.out.println("No jobs found");
+                    } else {
+                        for (Job job : jobs) {
+                            System.out.println(
+                                    job.getId() + " | "
+                                            + job.getTitle()
+                                            + " | " + job.getLocation()
+                                            + " | " + job.getJobType()
+                            );
+                        }
+                    }
                     break;
 
                 case 4:
-                    Application applyJob = applyJob();
-                    applicationService.addApplication(applyJob);
+                    if(loggedInApplicant == null) {
+                        System.out.println("Please login first");
+                        break;
+                    }
+                    Application application = applyJob(loggedInApplicant.getId());
+                    applicationService.addApplication(application);
+                    System.out.println("Application submitted");
+
                     break;
                 case 5:
+                    if(loggedInApplicant == null) {
+                        System.out.println("Please login first");
+                        break;
+                    }
+                    List<ApplicationHistoryView> history = applicationService.viewApplicationHistory(loggedInApplicant.getId());
 
+                    if(history.isEmpty()) {
+                        System.out.println("No application found");
+                    } else {
+                        for (ApplicationHistoryView item : history) {
+                            System.out.println(item.job().getTitle() + " | " + item.status() + " | Applied: " + item.appliedAt());
+                        }
+                    }
                     break;
 
                 case 6:
@@ -90,23 +146,16 @@ public class ApplicationMenu {
         return new Applicant(name, email, skills);
     }
 
-    private Applicant loginApplicant() {
+    private String loginApplicant() {
         System.out.println("Enter email");
-        String email = userInput.nextLine();
-
-        System.out.println("Successfully logged in");
-
-        return new Applicant(email);
+        return userInput.nextLine();
     }
 
-    private Application applyJob() {
+    private Application applyJob(int applicantId) {
         System.out.print("Enter jobId");
         int jobId = userInput.nextInt();
         userInput.nextLine();
 
-        System.out.print("Enter applicantId");
-        int applicantId = userInput.nextInt();
-        userInput.nextLine();
 
         LocalDate appliedAt = LocalDate.now();
 

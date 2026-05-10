@@ -5,32 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8bba62a1-9e66-4938-b4c4-ae530cfc7c66" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/ApplicantDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/ApplicationDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/EmployerDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/JobDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/exception/DuplicateApplicationException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/exception/JobBoardException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Applicant.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Employer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Job.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/JobType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Status.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/ApplicationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/JobService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/ApplicationMenu.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/EmployerMenu.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/util/DatabaseConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/util/DatabaseInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dto/ApplicantApplicationView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dto/ApplicationHistoryView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dto/JobApplicationCount.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/6c31bfb2-7bf6-47f7-957b-fc12381de94b.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/6c31bfb2-7bf6-47f7-957b-fc12381de94b.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/ApplicationDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/ApplicationDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/JobDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/dao/JobDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/ApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/ApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/JobService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/JobService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/ApplicationMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/ApplicationMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/EmployerMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/EmployerMenu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/util/DatabaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/util/DatabaseConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +30,7 @@
         <option value="Enum" />
         <option value="Exception" />
         <option value="Class" />
+        <option value="Record" />
       </list>
     </option>
   </component>
@@ -58,26 +46,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java" />
@@ -118,6 +106,11 @@
       <workItem from="1778036499362" duration="5358000" />
       <workItem from="1778042011145" duration="281000" />
       <workItem from="1778042330208" duration="1637000" />
+      <workItem from="1778076089133" duration="1576000" />
+      <workItem from="1778121517523" duration="8730000" />
+      <workItem from="1778208910289" duration="7756000" />
+      <workItem from="1778298397468" duration="6871000" />
+      <workItem from="1778381889924" duration="8076000" />
     </task>
     <servers />
   </component>

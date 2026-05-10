@@ -79,6 +79,40 @@ public class JobDAO {
         return Optional.empty();
     }
 
+    public List<Job> findByEmployerId(int id){
+        List<Job> jobList = new ArrayList<>();
+        String sql = "SELECT * FROM jobs WHERE employer_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    jobList.add(mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+        }
+        return jobList;
+    }
+
+    public List<Job> findOpenJobsByType(JobType jobType){
+        List<Job> jobs = new ArrayList<>();
+        String sql = "SELECT * FROM jobs WHERE job_type = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, jobType.name());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                jobs.add(mapRow(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return jobs;
+    }
+
+
     public List<Job> findAll(){
         List<Job> list = new ArrayList<>();
         String sql = "SELECT * FROM jobs ORDER BY title";
@@ -127,6 +161,20 @@ public class JobDAO {
             e.printStackTrace();
         }
         return -1; // error
+    }
+
+    public void closeJob(int jobId) {
+        String sql = "UPDATE jobs SET is_open = false WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, jobId);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                System.out.println("Job not found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private Job mapRow(ResultSet resultSet){
