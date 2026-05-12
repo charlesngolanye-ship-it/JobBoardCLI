@@ -5,8 +5,12 @@ import com.charlesngolanye.board.dao.ApplicationDAO;
 import com.charlesngolanye.board.dao.EmployerDAO;
 import com.charlesngolanye.board.dao.JobDAO;
 import com.charlesngolanye.board.dto.ApplicantApplicationView;
-import com.charlesngolanye.board.model.*;
+
 import com.charlesngolanye.board.dto.JobApplicationCount;
+import com.charlesngolanye.board.exception.EmployerExistsException;
+import com.charlesngolanye.board.exception.JobNotFoundException;
+import com.charlesngolanye.board.model.*;
+
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,28 +32,8 @@ public class JobService {
 
     public void addJob(Job job) {
 
-        if (employerDAO.findById(job.getEmployerId()).isEmpty()) {
-            throw new IllegalArgumentException("Employer does not exist");
-        }
-
         if (jobDAO.findById(job.getId()).isPresent()) {
             throw new IllegalArgumentException("Job exists already");
-        }
-
-        if (job.getSalaryMin() > job.getSalaryMax()) {
-            throw new IllegalArgumentException("Minimum salary exceeds maximum");
-        }
-
-        if (job.getDeadline().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Deadline cannot be in the past");
-        }
-
-        if (job.getTitle() == null || job.getTitle().isBlank()) {
-            throw new IllegalArgumentException("Title cannot be empty");
-        }
-
-        if (!job.isOpen()) {
-            throw new IllegalArgumentException("Job is not open for application");
         }
 
         jobDAO.create(job);
@@ -57,21 +41,10 @@ public class JobService {
 
     public void addEmployer(Employer employer) {
 
-        if (employer.getName() == null || employer.getName().isBlank()) {
-            throw new IllegalArgumentException("Employer name cannot be empty");
-        }
-
-        if (employer.getEmail() == null || employer.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Employer email cannot be empty");
-        }
-
-        if (!employer.getEmail().contains("@")) {
-            throw new IllegalArgumentException("Invalid email address");
-        }
-
+        // no two employers with the same email
         Optional<Employer> existingEmployer = employerDAO.findByEmail(employer.getEmail());
         if (existingEmployer.isPresent()) {
-            throw new IllegalArgumentException("Employer already registered");
+            throw new EmployerExistsException("Employer already registered with email: " + employer.getEmail());
         }
 
         employerDAO.create(employer);
@@ -119,7 +92,7 @@ public class JobService {
     public void closeJob(int jobId) {
         Optional<Job> job = jobDAO.findById(jobId);
         if (job.isEmpty()) {
-            throw new IllegalArgumentException("Job does not exist");
+            throw new JobNotFoundException("Job with id: " + jobId + " not found");
         }
         if (!job.get().isOpen()) {
             throw new IllegalArgumentException("Job already closed");

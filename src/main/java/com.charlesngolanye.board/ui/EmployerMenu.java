@@ -1,6 +1,10 @@
 package com.charlesngolanye.board.ui;
 
 import com.charlesngolanye.board.dto.ApplicantApplicationView;
+import com.charlesngolanye.board.exception.EmailNotFoundException;
+import com.charlesngolanye.board.exception.EmployerExistsException;
+import com.charlesngolanye.board.exception.JobExistsException;
+import com.charlesngolanye.board.exception.JobNotFoundException;
 import com.charlesngolanye.board.model.Employer;
 import com.charlesngolanye.board.model.Job;
 import com.charlesngolanye.board.model.JobType;
@@ -18,6 +22,7 @@ public class EmployerMenu {
     private final JobService jobService;
     private final ApplicationService applicationService;
     private final Scanner userInput = new Scanner(System.in);
+    public static Employer loggedInEmployer = null;
 
     public EmployerMenu(JobService jobService, ApplicationService applicationService) {
         this.jobService = jobService;
@@ -25,7 +30,7 @@ public class EmployerMenu {
     }
 
     public void start() {
-        Employer loggedInEmployer = null;
+        //Employer loggedInEmployer = null;
 
         while (true) {
             printEmployerMenu();
@@ -35,87 +40,30 @@ public class EmployerMenu {
 
             switch (choice) {
                 case 1:
-                    Employer employer = registerEmployer();
-                    jobService.addEmployer(employer);
+                    registerEmployer();
                     break;
 
                 case 2:
-                    String email = loginEmployer();
-                    Optional<Employer> employerOptional = jobService.findEmployerByEmail(email);
-                    if (employerOptional.isPresent()) {
-                        loggedInEmployer = employerOptional.get();
-                        System.out.println("Successfully logged in");
-                    }
-                    else {
-                        System.out.println("Invalid email");
-                    }
+                    loginEmployer();
                     break;
 
                 case 3:
-                    Job job = postJob();
-                    jobService.addJob(job);
+                    postJob();
                     break;
 
                 case 4:
-                    if (loggedInEmployer == null) {
-                        System.out.println("Please login first");
-                        break;
-                    }
-
-                    List<JobApplicationCount> jobs = jobService.findJobsByEmployerId(loggedInEmployer.getId());
-                    for (JobApplicationCount jobApplicationCount : jobs) {
-                        System.out.println(jobApplicationCount.job().getTitle()
-                        + "| Applications: " + jobApplicationCount.applicationCount());
-
-                    }
-
+                    viewJobListings();
                     break;
                 case 5:
-                    System.out.print("Enter job id:");
-                    int jobId = userInput.nextInt();
-                    userInput.nextLine();
-
-                    List<ApplicantApplicationView> applicants = jobService.viewApplicantsForJob(jobId);
-                    for (ApplicantApplicationView applicant : applicants) {
-                        System.out.println(applicant.applicant().getName()
-                                + " | " + applicant.status()
-                        );
-                    }
-
+                    viewJobApplicants();
                     break;
 
                 case 6:
-                    System.out.println("Enter application id:");
-                    int applicationId = userInput.nextInt();
-
-                    System.out.println("""
-                            1. Shortlist
-                            2. Reject
-                            """);
-                    int statusChoice = userInput.nextInt();
-                    userInput.nextLine();
-
-                    Status status;
-                    if (statusChoice == 1) {
-                        status = Status.SHORTLISTED;
-                    } else if (statusChoice == 2) {
-                        status = Status.REJECTED;
-                    } else {
-                        System.out.println("Invalid choice");
-                        break;
-                    }
-
-                    applicationService.updateApplicationStatus(applicationId, status);
-                    System.out.println("Application updated");
+                    processApplication();
                     break;
 
                 case 7:
-                    System.out.println("Enter job id to close: ");
-                    int closeJobId = userInput.nextInt();
-                    userInput.nextLine();
-
-                    jobService.closeJob(closeJobId);
-                    System.out.println("Job closed");
+                    closeJob();
                     break;
 
                 case 0:
@@ -124,79 +72,216 @@ public class EmployerMenu {
         }
 
 
-
-
     }
 
-    private static void printEmployerMenu(){
+    private void closeJob() {
+        while (true) {
+            try {
+                System.out.println("Enter job id to close: ");
+                int closeJobId = userInput.nextInt();
+                userInput.nextLine();
+
+                jobService.closeJob(closeJobId);
+                System.out.println("Job closed");
+                break;
+
+            } catch (JobNotFoundException e) {
+                System.out.println("Job not found");
+            }
+
+        }
+    }
+
+
+    private static void printEmployerMenu() {
         System.out.println("""
-                    1. Register Employer
-                    2. Login Employer
-                    3. Post Job
-                    4. View Job Listings with application counts
-                    5. View Job Applicants
-                    6. Shortlist or Reject Applicant
-                    7. Close a job listing (sets is_open = false)
-                    0. Exit
-        """);
+                            1. Register Employer
+                            2. Login Employer
+                            3. Post Job
+                            4. View Job Listings with application counts
+                            5. View Job Applicants
+                            6. Shortlist or Reject Applicant
+                            7. Close a job listing (sets is_open = false)
+                            0. Exit
+                """);
 
     }
 
-    private Employer registerEmployer() {
-        System.out.println("Enter name");
-        String name = userInput.nextLine();
+    private void registerEmployer() {
+        while (true) {
+            System.out.println("Enter name");
+            String name = userInput.nextLine();
 
-        System.out.println("Enter email");
-        String email = userInput.nextLine();
+            System.out.println("Enter email");
+            String email = userInput.nextLine();
 
-        System.out.println("Enter industry");
-        String industry = userInput.nextLine();
+            System.out.println("Enter industry");
+            String industry = userInput.nextLine();
 
-        System.out.println("Employer registered");
+            try {
+                Employer employer = new Employer(name, email, industry);
+                jobService.addEmployer(employer);
+                System.out.println("Employer registered");
+                break;
 
-        return new Employer(name, email, industry);
+            } catch (EmployerExistsException e) {
+                System.out.println(e.getMessage() + " please try again");
+            }
+
+        }
     }
 
-    private String loginEmployer() {
-        System.out.println("Enter email");
+    private void loginEmployer() {
+        while (true) {
 
-        return userInput.nextLine();
+            try {
+                System.out.println("Enter email");
+                String email = userInput.nextLine();
+
+                Optional<Employer> employerOptional = jobService.findEmployerByEmail(email);
+                if (employerOptional.isPresent()) {
+                    loggedInEmployer = employerOptional.get();
+                    System.out.println("Successfully logged in");
+                    break;
+                }
+            } catch (EmailNotFoundException e) {
+                System.out.println(e.getMessage() + " please try again");
+                // what does e.getMessage() return? I would like email not found, please try again
+                // throw new DuplicateApplicationException("Duplicate application with id: " + application.getId());
+                // what is the difference with throw new DuplicationException ...one throws, the other catches
+            }
+        }
+
     }
 
-    private Job postJob() {
-        System.out.print("Enter employer employerId");
-        int employerId = userInput.nextInt();
-        userInput.nextLine();
 
-        System.out.print("Enter job title");
-        String title = userInput.nextLine();
+    private void postJob() {
+        while (true) {
+            System.out.print("Enter employer employerId");
+            int employerId = userInput.nextInt();
+            userInput.nextLine();
 
-        System.out.print("Enter job description");
-        String description = userInput.nextLine();
+            System.out.print("Enter job title");
+            String title = userInput.nextLine();
 
-        System.out.print("Enter job location");
-        String location = userInput.nextLine();
+            System.out.print("Enter job description");
+            String description = userInput.nextLine();
 
-        System.out.print("Enter job type");
-        JobType jobType = JobType.valueOf(userInput.nextLine());
+            System.out.print("Enter job location");
+            String location = userInput.nextLine();
 
-        System.out.print("Enter minimum salary");
-        Double minimumSalary = userInput.nextDouble();
+            System.out.print("Enter job type");
+            JobType jobType;
+            try {
+                jobType = JobType.valueOf(userInput.nextLine().trim().toUpperCase()
+                        .replace(" ", "_")
+                        .replace("-", "_"));
+            } catch (IllegalArgumentException e) {
+                System.out.println(" Invalid job type");
+                continue;
+            }
 
-        System.out.print("Enter maximum salary");
-        Double maximumSalary = userInput.nextDouble();
-        userInput.nextLine();
+            System.out.print("Enter minimum salary");
+            Double minimumSalary;
+            try {
+                minimumSalary = userInput.nextDouble();
+            } catch (IllegalArgumentException e) {
+                System.out.println(" Invalid input");
+                continue;
+            }
 
-        LocalDate postedAt = LocalDate.now();
+            System.out.print("Enter maximum salary");
+            Double maximumSalary = userInput.nextDouble();
+            userInput.nextLine();
 
-        System.out.print("Enter deadline date (YYYY-MM-DD)");
-        LocalDate deadline = LocalDate.parse(userInput.nextLine());
+            LocalDate postedAt = LocalDate.now();
 
-        boolean isOpen = true;
+            System.out.print("Enter deadline date (YYYY-MM-DD)");
+            LocalDate deadline = LocalDate.parse(userInput.nextLine());
 
-        return new Job(employerId, title, description, location, jobType,
+            boolean isOpen = true;
+
+            try {
+                Job job = new Job(employerId, title, description, location, jobType,
                         minimumSalary, maximumSalary, postedAt, deadline, isOpen);
+                jobService.addJob(job);
+                System.out.println("Job added");
+                break;
+
+            } catch (JobExistsException e) {
+                System.out.println(e.getMessage() + " please try again");
+            }
+        }
 
     }
+
+
+    private void viewJobListings() {
+        while (true) {
+            if (loggedInEmployer == null) {
+                System.out.println("Please login first");
+                break;
+            }
+
+            List<JobApplicationCount> jobs = jobService.findJobsByEmployerId(loggedInEmployer.getId());
+            for (JobApplicationCount jobApplicationCount : jobs) {
+                System.out.println(jobApplicationCount.job().getTitle()
+                        + "| Applications: " + jobApplicationCount.applicationCount());
+
+            break;
+            }
+        }
+    }
+
+    private void viewJobApplicants() {
+        while (true) {
+            try {
+                System.out.print("Enter job id:");
+                int jobId = userInput.nextInt();
+                userInput.nextLine();
+
+                List<ApplicantApplicationView> applicants = jobService.viewApplicantsForJob(jobId);
+                for (ApplicantApplicationView applicant : applicants) {
+                    System.out.println(applicant.applicant().getName()
+                            + " | " + applicant.status()
+                    );
+                }
+                break;
+
+            } catch (JobNotFoundException e) {
+                System.out.println(e.getMessage() + " please try again");
+            }
+        }
+    }
+
+    private void processApplication() {
+        while (true) {
+            System.out.println("Enter application id:");
+            int applicationId = userInput.nextInt();
+            userInput.nextLine();
+
+            System.out.println("""
+                    1. Shortlist
+                    2. Reject
+                    """);
+            int statusChoice = userInput.nextInt();
+            userInput.nextLine();
+
+            Status status;
+            if (statusChoice == 1) {
+                status = Status.SHORTLISTED;
+            } else if (statusChoice == 2) {
+                status = Status.REJECTED;
+            } else {
+                System.out.println("Invalid choice");
+                break;
+            }
+
+            applicationService.updateApplicationStatus(applicationId, status);
+            System.out.println("Application updated");
+            break;
+        }
+    }
+
 }
 

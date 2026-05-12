@@ -5,6 +5,8 @@ import com.charlesngolanye.board.dao.ApplicationDAO;
 import com.charlesngolanye.board.dao.JobDAO;
 import com.charlesngolanye.board.dto.ApplicantApplicationView;
 import com.charlesngolanye.board.dto.ApplicationHistoryView;
+import com.charlesngolanye.board.exception.ApplicantExistsException;
+import com.charlesngolanye.board.exception.DuplicateApplicationException;
 import com.charlesngolanye.board.model.Applicant;
 import com.charlesngolanye.board.model.Application;
 import com.charlesngolanye.board.model.Job;
@@ -26,19 +28,16 @@ public class ApplicationService {
     }
 
     public void addApplication(Application application) {
-        Optional<Application> existing = applicationDAO.findByJobAndApplicant(application.getJobId(),  application.getApplicantId());
-        if (existing.isPresent()) {
-            throw new IllegalArgumentException("Applicant already exists");
-        }
-        if (applicationDAO.findApplicationById(application.getId()).isPresent()) {
-            throw new IllegalArgumentException("Application already exists");
+        Optional<Application> optionalApplication = applicationDAO.findApplicationById(application.getId());
+        if (optionalApplication.isPresent()) {
+            throw new DuplicateApplicationException("Duplicate application with id: " + application.getId());
         }
         applicationDAO.create(application);
     }
 
     public void addApplicant(Applicant applicant) {
         if (applicantDAO.findById(applicant.getId()).isPresent()) {
-            throw new IllegalArgumentException("Applicant already exists");
+            throw new ApplicantExistsException("Applicant with id: " + applicant.getId() + " already exists");
         }
         applicantDAO.create(applicant);
     }
