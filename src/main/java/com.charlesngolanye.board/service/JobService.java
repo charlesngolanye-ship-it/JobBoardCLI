@@ -102,3 +102,11 @@ public class JobService {
 
 
 }
+/*
+* Service layer
+    ↓ throws
+UI layer
+    ↓ catches
+prints message
+* Service layer should NOT know about console printing
+ */

@@ -14,6 +14,7 @@ import com.charlesngolanye.board.service.ApplicationService;
 import com.charlesngolanye.board.service.JobService;
 
 import java.time.LocalDate;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -74,23 +75,6 @@ public class EmployerMenu {
 
     }
 
-    private void closeJob() {
-        while (true) {
-            try {
-                System.out.println("Enter job id to close: ");
-                int closeJobId = userInput.nextInt();
-                userInput.nextLine();
-
-                jobService.closeJob(closeJobId);
-                System.out.println("Job closed");
-                break;
-
-            } catch (JobNotFoundException e) {
-                System.out.println("Job not found");
-            }
-
-        }
-    }
 
 
     private static void printEmployerMenu() {
@@ -134,7 +118,7 @@ public class EmployerMenu {
     private void loginEmployer() {
         while (true) {
 
-            try {
+
                 System.out.println("Enter email");
                 String email = userInput.nextLine();
 
@@ -143,13 +127,14 @@ public class EmployerMenu {
                     loggedInEmployer = employerOptional.get();
                     System.out.println("Successfully logged in");
                     break;
+                } else {
+                    System.out.println("Email not found, please try again");
                 }
-            } catch (EmailNotFoundException e) {
-                System.out.println(e.getMessage() + " please try again");
+
                 // what does e.getMessage() return? I would like email not found, please try again
                 // throw new DuplicateApplicationException("Duplicate application with id: " + application.getId());
                 // what is the difference with throw new DuplicationException ...one throws, the other catches
-            }
+
         }
 
     }
@@ -157,9 +142,11 @@ public class EmployerMenu {
 
     private void postJob() {
         while (true) {
-            System.out.print("Enter employer employerId");
-            int employerId = userInput.nextInt();
-            userInput.nextLine();
+            if (loggedInEmployer == null) {
+                System.out.println("Please login first");
+                return;
+            }
+            int employerId = loggedInEmployer.getId();
 
             System.out.print("Enter job title");
             String title = userInput.nextLine();
@@ -185,19 +172,34 @@ public class EmployerMenu {
             Double minimumSalary;
             try {
                 minimumSalary = userInput.nextDouble();
-            } catch (IllegalArgumentException e) {
+            } catch (InputMismatchException e) {
                 System.out.println(" Invalid input");
+                userInput.nextLine();
                 continue;
             }
 
             System.out.print("Enter maximum salary");
-            Double maximumSalary = userInput.nextDouble();
-            userInput.nextLine();
+            Double maximumSalary;
+            try {
+                maximumSalary = userInput.nextDouble();
+            } catch (InputMismatchException e) {
+                System.out.println(" Invalid input");
+                userInput.nextLine();
+                continue;
+            }
 
             LocalDate postedAt = LocalDate.now();
 
             System.out.print("Enter deadline date (YYYY-MM-DD)");
-            LocalDate deadline = LocalDate.parse(userInput.nextLine());
+            LocalDate deadline;
+            try {
+                deadline = LocalDate.parse(userInput.nextLine());
+            } catch (InputMismatchException e) {
+                System.out.println(" Invalid input");
+                userInput.nextLine();
+                continue;
+            }
+
 
             boolean isOpen = true;
 
@@ -236,6 +238,11 @@ public class EmployerMenu {
     private void viewJobApplicants() {
         while (true) {
             try {
+                if (loggedInEmployer == null) {
+                    System.out.println("Please login first");
+                    return;
+                }
+
                 System.out.print("Enter job id:");
                 int jobId = userInput.nextInt();
                 userInput.nextLine();
@@ -256,6 +263,11 @@ public class EmployerMenu {
 
     private void processApplication() {
         while (true) {
+            if (loggedInEmployer == null) {
+                System.out.println("Please login first");
+                return;
+            }
+
             System.out.println("Enter application id:");
             int applicationId = userInput.nextInt();
             userInput.nextLine();
@@ -283,5 +295,27 @@ public class EmployerMenu {
         }
     }
 
+    private void closeJob() {
+        while (true) {
+            try {
+                if (loggedInEmployer == null) {
+                    System.out.println("Please login first");
+                    return;
+                }
+
+                System.out.println("Enter job id to close: ");
+                int closeJobId = userInput.nextInt();
+                userInput.nextLine();
+
+                jobService.closeJob(closeJobId);
+                System.out.println("Job closed");
+                break;
+
+            } catch (JobNotFoundException e) {
+                System.out.println("Job not found");
+            }
+
+        }
+    }
 }
 
