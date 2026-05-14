@@ -2,6 +2,8 @@ package com.charlesngolanye.board.ui;
 
 
 import com.charlesngolanye.board.dto.ApplicationHistoryView;
+import com.charlesngolanye.board.exception.ApplicantExistsException;
+import com.charlesngolanye.board.exception.ApplicantNotFoundException;
 import com.charlesngolanye.board.model.Status;
 import com.charlesngolanye.board.model.Applicant;
 import com.charlesngolanye.board.model.Application;
@@ -20,6 +22,7 @@ public class ApplicationMenu {
     private final JobService jobService;
 
     private final Scanner userInput = new Scanner(System.in);
+    public static Applicant loggedInApplicant = null;
 
     public ApplicationMenu(ApplicationService applicationService, JobService jobService) {
         this.applicationService = applicationService;
@@ -27,7 +30,7 @@ public class ApplicationMenu {
     }
 
     public void start() {
-        Applicant loggedInApplicant = null;
+        //Applicant loggedInApplicant = null;
 
         while (true) {
             printApplicantMenu();
@@ -37,20 +40,11 @@ public class ApplicationMenu {
 
             switch (choice) {
                 case 1:
-                    Applicant applicant = registerApplicant();
-                    applicationService.addApplicant(applicant);
+                    registerApplicant();
                     break;
 
                 case 2:
-                    String email = loginApplicant();
-                    Optional<Applicant> applicantOptional = applicationService.getApplicantByEmail(email);
-                    if (applicantOptional.isPresent()) {
-                        loggedInApplicant = applicantOptional.get();
-                        System.out.println("Successfully logged in");
-                    }
-                    else {
-                        System.out.println("Invalid email");
-                    }
+                    loginApplicant();
                     break;
 
                 case 3:
@@ -81,7 +75,7 @@ public class ApplicationMenu {
                     break;
 
                 case 4:
-                    if(loggedInApplicant == null) {
+                    if (loggedInApplicant == null) {
                         System.out.println("Please login first");
                         break;
                     }
@@ -91,13 +85,13 @@ public class ApplicationMenu {
 
                     break;
                 case 5:
-                    if(loggedInApplicant == null) {
+                    if (loggedInApplicant == null) {
                         System.out.println("Please login first");
                         break;
                     }
                     List<ApplicationHistoryView> history = applicationService.viewApplicationHistory(loggedInApplicant.getId());
 
-                    if(history.isEmpty()) {
+                    if (history.isEmpty()) {
                         System.out.println("No application found");
                     } else {
                         for (ApplicationHistoryView item : history) {
@@ -115,41 +109,63 @@ public class ApplicationMenu {
         }
 
 
-
-
     }
 
-    private static void printApplicantMenu(){
+    private static void printApplicantMenu() {
         System.out.println("""
-                    1. Register Applicant
-                    2. Login Applicant
-                    3. Search open jobs (keyword, location, type, salary range)
-                    4. Apply Job
-                    5. View Job Applications
-                    0. Exit
-        """);
+                            1. Register Applicant
+                            2. Login Applicant
+                            3. Search open jobs (keyword, location, type, salary range)
+                            4. Apply Job
+                            5. View Job Applications
+                            0. Exit
+                """);
 
     }
 
-    private Applicant registerApplicant() {
-        System.out.println("Enter name");
-        String name = userInput.nextLine();
+    private void registerApplicant() {
+        while (true) {
+            try {
+                System.out.println("Enter name");
+                String name = userInput.nextLine();
 
-        System.out.println("Enter email");
-        String email = userInput.nextLine();
+                System.out.println("Enter email");
+                String email = userInput.nextLine();
 
-        System.out.println("Enter skills");
-        String skills = userInput.nextLine();
+                System.out.println("Enter skills");
+                String skills = userInput.nextLine();
 
-        System.out.println("Applicant registered");
+                Applicant applicant = new Applicant(name, email, skills);
+                applicationService.addApplicant(applicant);
+                System.out.println("Applicant registered");
+                return;
 
-        return new Applicant(name, email, skills);
+            } catch (IllegalArgumentException | ApplicantExistsException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
-    private String loginApplicant() {
-        System.out.println("Enter email");
-        return userInput.nextLine();
+    private void loginApplicant() {
+        while (true) {
+            try {
+                System.out.println("Enter email");
+                String email = userInput.nextLine();
+
+                Optional<Applicant> applicantOptional = applicationService.getApplicantByEmail(email);
+                if (applicantOptional.isPresent()) {
+                    loggedInApplicant = applicantOptional.get();
+                    System.out.println("Successfully logged in");
+                    return;
+                } else {
+                    System.out.println("Applicant not found");
+                }
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
+
 
     private Application applyJob(int applicantId) {
         System.out.print("Enter jobId");

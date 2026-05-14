@@ -14,6 +14,7 @@ import com.charlesngolanye.board.service.ApplicationService;
 import com.charlesngolanye.board.service.JobService;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.Scanner;
 public class EmployerMenu {
     private final JobService jobService;
     private final ApplicationService applicationService;
+
     private final Scanner userInput = new Scanner(System.in);
     public static Employer loggedInEmployer = null;
 
@@ -76,7 +78,6 @@ public class EmployerMenu {
     }
 
 
-
     private static void printEmployerMenu() {
         System.out.println("""
                             1. Register Employer
@@ -119,21 +120,21 @@ public class EmployerMenu {
         while (true) {
 
 
-                System.out.println("Enter email");
-                String email = userInput.nextLine();
+            System.out.println("Enter email");
+            String email = userInput.nextLine();
 
-                Optional<Employer> employerOptional = jobService.findEmployerByEmail(email);
-                if (employerOptional.isPresent()) {
-                    loggedInEmployer = employerOptional.get();
-                    System.out.println("Successfully logged in");
-                    break;
-                } else {
-                    System.out.println("Email not found, please try again");
-                }
+            Optional<Employer> employerOptional = jobService.findEmployerByEmail(email);
+            if (employerOptional.isPresent()) {
+                loggedInEmployer = employerOptional.get();
+                System.out.println("Successfully logged in");
+                break;
+            } else {
+                System.out.println("Email not found, please try again");
+            }
 
-                // what does e.getMessage() return? I would like email not found, please try again
-                // throw new DuplicateApplicationException("Duplicate application with id: " + application.getId());
-                // what is the difference with throw new DuplicationException ...one throws, the other catches
+            // what does e.getMessage() return? I would like email not found, please try again
+            // throw new DuplicateApplicationException("Duplicate application with id: " + application.getId());
+            // what is the difference with throw new DuplicationException ...one throws, the other catches
 
         }
 
@@ -157,66 +158,47 @@ public class EmployerMenu {
             System.out.print("Enter job location");
             String location = userInput.nextLine();
 
-            System.out.print("Enter job type");
-            JobType jobType;
             try {
-                jobType = JobType.valueOf(userInput.nextLine().trim().toUpperCase()
+                System.out.print("Enter job type");
+                JobType jobType = JobType.valueOf(userInput.nextLine().trim().toUpperCase()
                         .replace(" ", "_")
                         .replace("-", "_"));
-            } catch (IllegalArgumentException e) {
-                System.out.println(" Invalid job type");
-                continue;
-            }
 
-            System.out.print("Enter minimum salary");
-            Double minimumSalary;
-            try {
-                minimumSalary = userInput.nextDouble();
-            } catch (InputMismatchException e) {
-                System.out.println(" Invalid input");
+                System.out.print("Enter minimum salary");
+                Double minimumSalary = userInput.nextDouble();
+
+                System.out.print("Enter maximum salary");
+                Double maximumSalary = userInput.nextDouble();
                 userInput.nextLine();
-                continue;
-            }
 
-            System.out.print("Enter maximum salary");
-            Double maximumSalary;
-            try {
-                maximumSalary = userInput.nextDouble();
-            } catch (InputMismatchException e) {
-                System.out.println(" Invalid input");
-                userInput.nextLine();
-                continue;
-            }
+                LocalDate postedAt = LocalDate.now();
 
-            LocalDate postedAt = LocalDate.now();
+                System.out.print("Enter deadline date (YYYY-MM-DD)");
+                LocalDate deadline = LocalDate.parse(userInput.nextLine());
 
-            System.out.print("Enter deadline date (YYYY-MM-DD)");
-            LocalDate deadline;
-            try {
-                deadline = LocalDate.parse(userInput.nextLine());
-            } catch (InputMismatchException e) {
-                System.out.println(" Invalid input");
-                userInput.nextLine();
-                continue;
-            }
+                boolean isOpen = true;
 
-
-            boolean isOpen = true;
-
-            try {
                 Job job = new Job(employerId, title, description, location, jobType,
                         minimumSalary, maximumSalary, postedAt, deadline, isOpen);
                 jobService.addJob(job);
                 System.out.println("Job added");
                 break;
 
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format");
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input");
+                userInput.nextLine();
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid job type");
+
             } catch (JobExistsException e) {
                 System.out.println(e.getMessage() + " please try again");
             }
         }
-
     }
-
 
     private void viewJobListings() {
         while (true) {
@@ -230,7 +212,7 @@ public class EmployerMenu {
                 System.out.println(jobApplicationCount.job().getTitle()
                         + "| Applications: " + jobApplicationCount.applicationCount());
 
-            break;
+                break;
             }
         }
     }

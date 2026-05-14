@@ -58,8 +58,11 @@ public class ApplicationService {
     }
 
     public Optional<Applicant> getApplicantByEmail(String email) {
-        if (applicantDAO.findByEmail(email).isEmpty()) {
-            return Optional.empty();
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email format");
         }
         return applicantDAO.findByEmail(email);
     }
