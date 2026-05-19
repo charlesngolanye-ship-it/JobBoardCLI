@@ -30,7 +30,6 @@ public class ApplicationMenu {
     }
 
     public void start() {
-        //Applicant loggedInApplicant = null;
 
         while (true) {
             printApplicantMenu();
@@ -48,61 +47,15 @@ public class ApplicationMenu {
                     break;
 
                 case 3:
-                    System.out.print("""
-                            Enter job type:
-                            FULL_TIME
-                            PART_TIME
-                            CONTRACT
-                            REMOTE
-                            """);
-                    String typeInput = userInput.nextLine();
-
-                    JobType jobType = JobType.valueOf(typeInput.toUpperCase());
-                    List<Job> jobs = jobService.findOpenJobsByType(jobType);
-
-                    if (jobs.isEmpty()) {
-                        System.out.println("No jobs found");
-                    } else {
-                        for (Job job : jobs) {
-                            System.out.println(
-                                    job.getId() + " | "
-                                            + job.getTitle()
-                                            + " | " + job.getLocation()
-                                            + " | " + job.getJobType()
-                            );
-                        }
-                    }
+                    searchOpenJobs();
                     break;
 
                 case 4:
-                    if (loggedInApplicant == null) {
-                        System.out.println("Please login first");
-                        break;
-                    }
-                    Application application = applyJob(loggedInApplicant.getId());
-                    applicationService.addApplication(application);
-                    System.out.println("Application submitted");
-
+                    applyJob();
                     break;
                 case 5:
-                    if (loggedInApplicant == null) {
-                        System.out.println("Please login first");
-                        break;
-                    }
-                    List<ApplicationHistoryView> history = applicationService.viewApplicationHistory(loggedInApplicant.getId());
-
-                    if (history.isEmpty()) {
-                        System.out.println("No application found");
-                    } else {
-                        for (ApplicationHistoryView item : history) {
-                            System.out.println(item.job().getTitle() + " | " + item.status() + " | Applied: " + item.appliedAt());
-                        }
-                    }
+                    viewJobApplications();
                     break;
-
-                case 6:
-                    break;
-
                 case 0:
                     return;
             }
@@ -110,6 +63,7 @@ public class ApplicationMenu {
 
 
     }
+
 
     private static void printApplicantMenu() {
         System.out.println("""
@@ -166,17 +120,71 @@ public class ApplicationMenu {
         }
     }
 
+    private void searchOpenJobs() {
+        while (true) {
+            System.out.print("""
+                    Enter job type:
+                    FULL_TIME
+                    PART_TIME
+                    CONTRACT
+                    REMOTE
+                    """);
+            String typeInput = userInput.nextLine();
 
-    private Application applyJob(int applicantId) {
-        System.out.print("Enter jobId");
-        int jobId = userInput.nextInt();
-        userInput.nextLine();
+            JobType jobType = JobType.valueOf(typeInput.toUpperCase());
+            List<Job> jobs = jobService.findOpenJobsByType(jobType);
 
+            if (jobs.isEmpty()) {
+                System.out.println("No jobs found");
+                return;
+            } else {
+                for (Job job : jobs) {
+                    System.out.println(
+                            job.getId() + " | "
+                                    + job.getTitle()
+                                    + " | " + job.getLocation()
+                                    + " | " + job.getJobType()
+                    );
+                }
+            }
+        }
+    }
 
-        LocalDate appliedAt = LocalDate.now();
+    private void applyJob() {
+        while (true) {
+            if (loggedInApplicant == null) {
+                System.out.println("Please login first");
+                return;
+            }
 
-        Status status = Status.PENDING;
+            System.out.print("Enter jobId");
+            int jobId = userInput.nextInt();
+            userInput.nextLine();
+            LocalDate appliedAt = LocalDate.now();
+            Status status = Status.PENDING;
 
-        return new Application(jobId, applicantId, appliedAt, status);
+            Application application = new Application(jobId, loggedInApplicant.getId(), appliedAt, status);
+            applicationService.addApplication(application);
+            System.out.println("Application submitted");
+
+        }
+    }
+
+    private void viewJobApplications() {
+        while (true) {
+            if (loggedInApplicant == null) {
+                System.out.println("Please login first");
+                return;
+            }
+            List<ApplicationHistoryView> history = applicationService.viewApplicationHistory(loggedInApplicant.getId());
+
+            if (history.isEmpty()) {
+                System.out.println("No application found");
+            } else {
+                for (ApplicationHistoryView item : history) {
+                    System.out.println(item.job().getTitle() + " | " + item.status() + " | Applied: " + item.appliedAt());
+                }
+            }
+        }
     }
 }

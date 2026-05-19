@@ -21,6 +21,18 @@ public class Job {
     public Job(int employerId, String title, String description, String location,
                JobType jobType, Double salaryMin, Double salaryMax, LocalDate postedAt,
                LocalDate deadline, boolean isOpen) {
+
+        validateEmployerId(employerId);
+        validateTitle(title);
+        validateDescription(description);
+        validateLocation(location);
+        validateJobType(jobType);
+        validateSalaryMin(salaryMin);
+        validateSalaryMax(salaryMax);
+        validatePostedAt(postedAt);
+        validateDeadline(deadline);
+        validateIsOpen(isOpen);
+
         this.employerId = employerId;
         this.title = title;
         this.description = description;
@@ -30,12 +42,24 @@ public class Job {
         this.salaryMax = salaryMax;
         this.postedAt = postedAt;
         this.deadline = deadline;
-        this.isOpen = isOpen;
+        this.isOpen = true;
     }
 
     public Job(int id, int employerId, String title, String description, String location,
                JobType jobType, Double salaryMin, Double salaryMax, LocalDate postedAt,
                LocalDate deadline, boolean isOpen) {
+        validateId(id);
+        validateEmployerId(employerId);
+        validateTitle(title);
+        validateDescription(description);
+        validateLocation(location);
+        validateJobType(jobType);
+        validateSalaryMin(salaryMin);
+        validateSalaryMax(salaryMax);
+        validatePostedAt(postedAt);
+        validateDeadline(deadline);
+        validateIsOpen(isOpen);
+
         this.id = id;
         this.employerId = employerId;
         this.title = title;
@@ -46,7 +70,95 @@ public class Job {
         this.salaryMax = salaryMax;
         this.postedAt = postedAt;
         this.deadline = deadline;
-        this.isOpen = isOpen;
+        this.isOpen = true;
+    }
+
+    private void validateId(int id) {
+        if (id < 0) {
+            throw new IllegalArgumentException(
+                    "ID cannot be negative."
+            );
+        }
+    }
+
+    private void validateEmployerId(int employerId) {
+        if (employerId <= 0) {
+            throw new IllegalArgumentException(
+                    "Employer ID cannot be negative."
+            );
+        }
+    }
+
+    private void validateTitle(String title) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Title cannot be empty."
+            );
+        }
+    }
+
+    private void validateDescription(String description) {
+        if (description == null || description.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Description cannot be empty."
+            );
+        }
+    }
+
+    private void validateLocation(String location) {
+        if (location == null || location.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Location cannot be empty."
+            );
+        }
+    }
+
+    private void validateJobType(JobType jobType) {
+        if (jobType == null) {
+            throw new IllegalArgumentException(
+                    "Job type cannot be null."
+            );
+        }
+    }
+
+    private void validateSalaryMin(Double salaryMin) {
+        if (salaryMin == null) {
+            throw new IllegalArgumentException(
+                    "Salary min cannot be null."
+            );
+        }
+    }
+
+    private void validateSalaryMax(Double salaryMax) {
+        if (salaryMax == null) {
+            throw new IllegalArgumentException(
+                    "Salary max cannot be null."
+            );
+        }
+    }
+
+    private void validatePostedAt(LocalDate postedAt) {
+        if (postedAt == null) {
+            throw new IllegalArgumentException(
+                    "Posted at cannot be null."
+            );
+        }
+    }
+
+    private void validateDeadline(LocalDate deadline) {
+        if (deadline == null) {
+            throw new IllegalArgumentException(
+                    "Deadline cannot be null."
+            );
+        }
+    }
+
+    private void validateIsOpen(boolean isOpen) {
+        if (!isOpen) {
+            throw new IllegalArgumentException(
+                    "Job must be open."
+            );
+        }
     }
 
     public int getId() {
@@ -54,6 +166,7 @@ public class Job {
     }
 
     public void setId(int id) {
+        validateId(id);
         this.id = id;
     }
 
@@ -62,6 +175,7 @@ public class Job {
     }
 
     public void setEmployerId(int employerId) {
+        validateEmployerId(employerId);
         this.employerId = employerId;
     }
 
@@ -70,6 +184,7 @@ public class Job {
     }
 
     public void setTitle(String title) {
+        validateTitle(title);
         this.title = title;
     }
 
@@ -78,6 +193,7 @@ public class Job {
     }
 
     public void setDescription(String description) {
+        validateDescription(description);
         this.description = description;
     }
 
@@ -86,6 +202,7 @@ public class Job {
     }
 
     public void setLocation(String location) {
+        validateLocation(location);
         this.location = location;
     }
 
@@ -94,6 +211,7 @@ public class Job {
     }
 
     public void setJobType(JobType jobType) {
+        validateJobType(jobType);
         this.jobType = jobType;
     }
 
@@ -102,6 +220,7 @@ public class Job {
     }
 
     public void setSalaryMin(Double salaryMin) {
+        validateSalaryMin(salaryMin);
         this.salaryMin = salaryMin;
     }
 
@@ -110,6 +229,7 @@ public class Job {
     }
 
     public void setSalaryMax(Double salaryMax) {
+        validateSalaryMax(salaryMax);
         this.salaryMax = salaryMax;
     }
 
@@ -118,6 +238,7 @@ public class Job {
     }
 
     public void setPostedAt(LocalDate postedAt) {
+        validatePostedAt(postedAt);
         this.postedAt = postedAt;
     }
 
@@ -126,6 +247,7 @@ public class Job {
     }
 
     public void setDeadline(LocalDate deadline) {
+        validateDeadline(deadline);
         this.deadline = deadline;
     }
 
@@ -134,7 +256,8 @@ public class Job {
     }
 
     public void setOpen(boolean open) {
-        isOpen = open;
+        validateIsOpen(open);
+        isOpen = true;
     }
 
     @Override

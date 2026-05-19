@@ -12,6 +12,12 @@ public class Application {
     public Application(){};
 
     public Application(int jobId, int applicantId, LocalDate appliedAt, Status status) {
+
+        validateJobId(jobId);
+        validateApplicantId(applicantId);
+        validateAppliedAt(appliedAt);
+        validateStatus(status);
+
         this.jobId = jobId;
         this.applicantId = applicantId;
         this.appliedAt = appliedAt;
@@ -19,6 +25,13 @@ public class Application {
     }
 
     public Application(int id, int jobId, int applicantId, LocalDate appliedAt, Status status) {
+
+        validateId(id);
+        validateJobId(jobId);
+        validateApplicantId(applicantId);
+        validateAppliedAt(appliedAt);
+        validateStatus(status);
+
         this.id = id;
         this.jobId = jobId;
         this.applicantId = applicantId;
@@ -26,11 +39,52 @@ public class Application {
         this.status = status;
     }
 
+    private void validateId(int id){
+        if(id < 0){
+            throw new IllegalArgumentException(
+                    "ID cannot be negative"
+            );
+        }
+    }
+
+    private void validateJobId(int jobId){
+        if(jobId <= 0){
+            throw new IllegalArgumentException(
+                    "Job ID cannot be negative"
+            );
+        }
+    }
+
+    private void validateApplicantId(int applicantId){
+        if(applicantId <= 0){
+            throw new IllegalArgumentException(
+                    "Applicant ID cannot be negative"
+            );
+        }
+    }
+
+    private void validateAppliedAt(LocalDate appliedAt){
+        if(appliedAt == null){
+            throw new IllegalArgumentException(
+                    "AppliedAt cannot be null"
+            );
+        }
+    }
+
+    private void validateStatus(Status status){
+        if(status == null){
+            throw new IllegalArgumentException(
+                    "Status cannot be null"
+            );
+        }
+    }
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
+        validateId(id);
         this.id = id;
     }
 
@@ -39,6 +93,7 @@ public class Application {
     }
 
     public void setJobId(int jobId) {
+        validateJobId(jobId);
         this.jobId = jobId;
     }
 
@@ -47,6 +102,7 @@ public class Application {
     }
 
     public void setApplicantId(int applicantId) {
+        validateApplicantId(applicantId);
         this.applicantId = applicantId;
     }
 
@@ -55,6 +111,7 @@ public class Application {
     }
 
     public void setAppliedAt(LocalDate appliedAt) {
+        validateAppliedAt(appliedAt);
         this.appliedAt = appliedAt;
     }
 
@@ -63,6 +120,7 @@ public class Application {
     }
 
     public void setStatus(Status status) {
+        validateStatus(status);
         this.status = status;
     }
 

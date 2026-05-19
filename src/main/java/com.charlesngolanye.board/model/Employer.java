@@ -9,20 +9,62 @@ public class Employer {
     public Employer() {};
 
     public Employer(String email) {
+        validateEmail(email);
         this.email = email;
     }
 
     public Employer(String name, String email, String industry) {
+        validateName(name);
+        validateEmail(email);
+        validateIndustry(industry);
+
         this.name = name;
         this.email = email;
         this.industry = industry;
     }
 
     public Employer(int id, String name, String email, String industry) {
+        validateId(id);
+        validateName(name);
+        validateEmail(email);
+        validateIndustry(industry);
+
         this.id = id;
         this.name = name;
         this.email = email;
         this.industry = industry;
+    }
+
+    private void validateId(int id){
+        if(id < 0){
+            throw new IllegalArgumentException(
+                    "ID cannot be negative"
+            );
+        }
+    }
+
+    private void validateName(String name) {
+        if(name == null || name.isEmpty()){
+            throw new IllegalArgumentException(
+                    "Name cannot be empty"
+            );
+        }
+    }
+
+    private void validateEmail(String email){
+        if(email == null || email.isEmpty()){
+            throw new IllegalArgumentException(
+                    "Email cannot be empty"
+            );
+        }
+    }
+
+    private void validateIndustry(String industry){
+        if(industry == null || industry.isEmpty()){
+            throw new IllegalArgumentException(
+                    "Industry cannot be empty"
+            );
+        }
     }
 
     public int getId() {
@@ -30,6 +72,7 @@ public class Employer {
     }
 
     public void setId(int id) {
+        validateId(id);
         this.id = id;
     }
 
@@ -38,6 +81,7 @@ public class Employer {
     }
 
     public void setName(String name) {
+        validateName(name);
         this.name = name;
     }
 
@@ -46,6 +90,7 @@ public class Employer {
     }
 
     public void setEmail(String email) {
+        validateEmail(email);
         this.email = email;
     }
 
@@ -54,6 +99,7 @@ public class Employer {
     }
 
     public void setIndustry(String industry) {
+        validateIndustry(industry);
         this.industry = industry;
     }
 

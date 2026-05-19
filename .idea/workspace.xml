@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8bba62a1-9e66-4938-b4c4-ae530cfc7c66" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/exception/ApplicantNotFoundException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Applicant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Applicant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/ApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/service/ApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Application.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Employer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Employer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Job.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/model/Job.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/ApplicationMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/ApplicationMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/EmployerMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com.charlesngolanye.board/ui/EmployerMenu.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +111,9 @@
       <workItem from="1778472535302" duration="3219000" />
       <workItem from="1778555647578" duration="6538000" />
       <workItem from="1778640758266" duration="6839000" />
-      <workItem from="1778726411574" duration="8835000" />
+      <workItem from="1778726411574" duration="9261000" />
+      <workItem from="1779076912375" duration="291000" />
+      <workItem from="1779159215423" duration="6098000" />
     </task>
     <servers />
   </component>
